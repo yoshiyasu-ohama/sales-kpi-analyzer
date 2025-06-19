@@ -7,25 +7,28 @@ from datetime import datetime
 import warnings
 warnings.filterwarnings('ignore')
 
-# 日本語フォントの設定（複数のオプションを試行）
-def set_japanese_font():
+# 日本語フォントの設定
+try:
+    import japanize_matplotlib
+    # japanize_matplotlibが正常に読み込まれた場合
+    st.sidebar.success("✅ 日本語フォント対応済み")
+except ImportError:
+    # フォールバック設定
     import matplotlib.font_manager as fm
     
-    # 日本語フォントの候補リスト
     japanese_fonts = [
         'Hiragino Sans',
-        'Yu Gothic',
+        'Yu Gothic', 
         'Meiryo',
         'MS Gothic',
         'Takao PGothic',
-        'IPAexGothic',
+        'IPAexGothic', 
         'IPAPGothic',
         'VL PGothic',
         'Noto Sans CJK JP',
         'DejaVu Sans'
     ]
     
-    # 利用可能なフォントを探す
     available_fonts = [f.name for f in fm.fontManager.ttflist]
     
     for font in japanese_fonts:
@@ -33,15 +36,13 @@ def set_japanese_font():
             plt.rcParams['font.family'] = font
             break
     else:
-        # フォールバック設定
         plt.rcParams['font.family'] = 'sans-serif'
         plt.rcParams['font.sans-serif'] = japanese_fonts + ['Arial', 'Liberation Sans']
     
-    # 負の値表示のためのマイナス記号設定
-    plt.rcParams['axes.unicode_minus'] = False
+    st.sidebar.warning("⚠️ japanize_matplotlibが見つかりません")
 
-# フォント設定を適用
-set_japanese_font()
+# 負の値表示のためのマイナス記号設定
+plt.rcParams['axes.unicode_minus'] = False
 
 # ページ設定
 st.set_page_config(
@@ -101,6 +102,8 @@ st.markdown("""
 # サイドバーの設定
 with st.sidebar:
     st.header("🔧 設定")
+    
+    # フォント状態表示（上記のフォント設定から移動）
     
     # グラフ設定
     st.subheader("グラフ設定")
